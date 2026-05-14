@@ -2,17 +2,24 @@ getgenv().env = getrenv()
 
 local TweenService = cloneref(game:GetService("TweenService"))
 local Players      = cloneref(game:GetService("Players"))
+local SoundService = cloneref(game:GetService("SoundService"))
 local C            = newcclosure
 
 local DEFAULTS = {
-	icon        = "rbxassetid://10709775560",
-	duration    = 3,
-	width       = 680,
-	height      = 46,
-	accentColor = Color3.fromRGB(52, 211, 153),
-	bgColor     = Color3.fromRGB(16, 16, 22),
-	bgColorTop  = Color3.fromRGB(26, 26, 36),
-	textColor   = Color3.fromRGB(220, 220, 235),
+	icon         = "rbxassetid://10709775560",
+	duration     = 3,
+	width        = 680,
+	height       = 46,
+
+	accentColor  = Color3.fromRGB(52, 211, 153),
+	bgColor      = Color3.fromRGB(16, 16, 22),
+	bgColorTop   = Color3.fromRGB(26, 26, 36),
+	textColor    = Color3.fromRGB(220, 220, 235),
+
+	soundEnabled = true,
+	soundId      = "rbxassetid://83059242168617",
+	soundVolume  = 1,
+	soundSpeed   = 1,
 }
 
 local SMALL_WIDTH = 46
@@ -21,14 +28,23 @@ local TOP_OFFSET  = 14
 local showNotification = C(function(message, opts)
 	opts = opts or {}
 
-	local icon        = opts.icon        or DEFAULTS.icon
-	local holdDuration = opts.duration   or DEFAULTS.duration
-	local FULL_WIDTH  = opts.width       or DEFAULTS.width
-	local BAR_HEIGHT  = opts.height      or DEFAULTS.height
-	local accentColor = opts.accentColor or DEFAULTS.accentColor
-	local bgColor     = opts.bgColor     or DEFAULTS.bgColor
-	local bgColorTop  = opts.bgColorTop  or DEFAULTS.bgColorTop
-	local textColor   = opts.textColor   or DEFAULTS.textColor
+	local icon          = opts.icon          or DEFAULTS.icon
+	local holdDuration  = opts.duration      or DEFAULTS.duration
+	local FULL_WIDTH    = opts.width         or DEFAULTS.width
+	local BAR_HEIGHT    = opts.height        or DEFAULTS.height
+	local accentColor   = opts.accentColor   or DEFAULTS.accentColor
+	local bgColor       = opts.bgColor       or DEFAULTS.bgColor
+	local bgColorTop    = opts.bgColorTop    or DEFAULTS.bgColorTop
+	local textColor     = opts.textColor     or DEFAULTS.textColor
+
+	local soundEnabled  = opts.soundEnabled
+	if soundEnabled == nil then
+		soundEnabled = DEFAULTS.soundEnabled
+	end
+
+	local soundId       = opts.soundId     or DEFAULTS.soundId
+	local soundVolume   = opts.soundVolume or DEFAULTS.soundVolume
+	local soundSpeed    = opts.soundSpeed  or DEFAULTS.soundSpeed
 
 	local iconBgColor = Color3.fromRGB(
 		math.clamp(accentColor.R * 255, 0, 255),
@@ -45,6 +61,23 @@ local showNotification = C(function(message, opts)
 	G2L["1"].IgnoreGuiInset = true
 	G2L["1"].DisplayOrder   = 2147483647
 	G2L["1"].Parent         = gethui()
+
+	if soundEnabled then
+		local sound = Instance.new("Sound")
+		sound.Name          = "notif_sound"
+		sound.SoundId       = soundId
+		sound.Volume        = soundVolume
+		sound.PlaybackSpeed = soundSpeed
+		sound.Parent        = G2L["1"]
+
+		G2L["sound"] = sound
+
+		task.spawn(function()
+			pcall(function()
+				sound:Play()
+			end)
+		end)
+	end
 
 	G2L["2"] = Instance.new("Frame", G2L["1"])
 	G2L["2"].Name             = "notifbar"
@@ -118,11 +151,15 @@ local showNotification = C(function(message, opts)
 	G2L["6"].TextStrokeColor3       = Color3.fromRGB(255, 255, 255)
 	G2L["6"].TextScaled             = false
 	G2L["6"].BackgroundColor3       = Color3.fromRGB(255, 255, 255)
-	G2L["6"].FontFace               = Font.new([[rbxasset://fonts/families/Ubuntu.json]], Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+	G2L["6"].FontFace               = Font.new(
+		"rbxasset://fonts/families/Ubuntu.json",
+		Enum.FontWeight.Medium,
+		Enum.FontStyle.Normal
+	)
 	G2L["6"].TextColor3             = textColor
 	G2L["6"].BackgroundTransparency = 1
 	G2L["6"].BorderColor3           = Color3.fromRGB(0, 0, 0)
-	G2L["6"].Text                   = message
+	G2L["6"].Text                   = tostring(message)
 	G2L["6"].TextTransparency       = 1
 	G2L["6"].TextXAlignment         = Enum.TextXAlignment.Left
 	G2L["6"].Size                   = UDim2.new(1, -68, 1, 0)
@@ -161,46 +198,60 @@ local showNotification = C(function(message, opts)
 		t.Completed:Wait()
 	end
 
-	tween(G2L["2"],
+	tween(
+		G2L["2"],
 		TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
 		{ Position = UDim2.new(0.5, 0, 0, TOP_OFFSET) }
 	)
 
-	tween(G2L["2"],
+	tween(
+		G2L["2"],
 		TweenInfo.new(0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out),
 		{ Size = UDim2.new(0, FULL_WIDTH, 0, BAR_HEIGHT) }
 	)
 
-	tween(G2L["6"],
+	tween(
+		G2L["6"],
 		TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
 		{ TextTransparency = 0 }
 	)
 
 	G2L["track"].BackgroundTransparency = 0
 
-	TweenService:Create(G2L["prog"],
+	TweenService:Create(
+		G2L["prog"],
 		TweenInfo.new(holdDuration, Enum.EasingStyle.Linear),
 		{ Size = UDim2.new(0, 0, 1, 0) }
 	):Play()
 
 	task.wait(holdDuration)
 
-	tween(G2L["6"],
+	tween(
+		G2L["6"],
 		TweenInfo.new(0.2, Enum.EasingStyle.Sine, Enum.EasingDirection.In),
 		{ TextTransparency = 1 }
 	)
 
 	G2L["track"].BackgroundTransparency = 1
 
-	tween(G2L["2"],
+	tween(
+		G2L["2"],
 		TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.In),
 		{ Size = UDim2.new(0, SMALL_WIDTH, 0, BAR_HEIGHT) }
 	)
 
-	tween(G2L["2"],
+	tween(
+		G2L["2"],
 		TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In),
 		{ Position = UDim2.new(0.5, 0, 0, -BAR_HEIGHT - 4) }
 	)
+
+	if G2L["sound"] then
+		pcall(function()
+			G2L["sound"]:Stop()
+			G2L["sound"]:Destroy()
+		end)
+	end
 
 	G2L["1"]:Destroy()
 end)
@@ -213,12 +264,16 @@ local notify = C(function(message, opts)
 
 	if not running then
 		running = true
+
 		task.spawn(function()
 			while #queue > 0 do
 				local args = table.remove(queue, 1)
+
 				showNotification(args[1], args[2])
+
 				task.wait(0.15)
 			end
+
 			running = false
 		end)
 	end
