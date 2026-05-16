@@ -972,22 +972,55 @@ registerCommand("consoleclear", function()
 	end
 end)
 
+
 inputBox.FocusLost:Connect(function(enterPressed)
 	if not enterPressed then
 		return
 	end
 
 	local raw = inputBox.Text
-	local command = raw:lower():match("^%s*(.-)%s*$")
+	local cleaned = raw:match("^%s*(.-)%s*$")
 
 	terminalPrint("C:/USER> " .. raw)
 
-	local callback = commands[command]
+	if cleaned == "" then
+		inputBox.Text = ""
+
+		task.defer(function()
+			inputBox:CaptureFocus()
+		end)
+
+		return
+	end
+
+	local lowered = cleaned:lower()
+
+	local callback = commands[lowered]
 
 	if callback then
-		callback(raw, command)
-	elseif command ~= "" then
-		terminalError("'" .. raw .. "' is not recognized as a command.")
+		local success, err = pcall(callback, "", raw, lowered)
+
+		if not success then
+			terminalError(err)
+		end
+	else
+		local cmd, args = cleaned:match("^(%S+)%s*(.*)$")
+
+		if cmd then
+			cmd = cmd:lower()
+		end
+
+		callback = commands[cmd]
+
+		if callback then
+			local success, err = pcall(callback, args, raw, cmd)
+
+			if not success then
+				terminalError(err)
+			end
+		else
+			terminalError("'" .. raw .. "' is not recognized as a command.")
+		end
 	end
 
 	inputBox.Text = ""
