@@ -1137,5 +1137,29 @@ return {
 
 	register = function(self, cmd, callback)
 		registerCommand(cmd, callback)
+	end,
+
+	openConsole = function()
+		animateOpen(console, defaults.console)
+	end,
+
+	closeConsole = function()
+		animateClose(console, defaults.console)
+	end,
+
+	toggleConsole = function()
+		toggleWindow(console, defaults.console)
+	end,
+
+	openCodeEditor = function()
+		animateOpen(codeEditor, defaults.codeEditor)
+	end,
+
+	closeCodeEditor = function()
+		animateClose(codeEditor, defaults.codeEditor)
+	end,
+
+	toggleCodeEditor = function()
+		toggleWindow(codeEditor, defaults.codeEditor)
 	end
 }
