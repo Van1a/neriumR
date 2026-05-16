@@ -202,6 +202,8 @@ G2L["17"]["ScrollBarImageColor3"] = Color3.fromRGB(0, 0, 0);
 G2L["17"]["Position"] = UDim2.new(0.49949, 0, 0.54728, 0);
 G2L["17"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 G2L["17"]["BackgroundTransparency"] = 1;
+G2L["17"].AutomaticCanvasSize = Enum.AutomaticSize.Y
+G2L["17"].ScrollingDirection = Enum.ScrollingDirection.Y
 
 
 -- StarterGui.Terminal.Body.TerminalInput.UIListLayout
