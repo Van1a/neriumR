@@ -1076,3 +1076,33 @@ oldError = hookfunction(env.error, function(message, level)
 	consoleError(tostring(message))
 	return oldError(message, level)
 end)
+
+return {
+	print = function(self, text)
+		terminalPrint(text)
+	end,
+
+	warn = function(self, text)
+		terminalWarn(text)
+	end,
+
+	error = function(self, text)
+		terminalError(text)
+	end,
+
+	consolePrint = function(self, text)
+		consolePrint(text)
+	end,
+
+	consoleWarn = function(self, text)
+		consoleWarn(text)
+	end,
+
+	consoleError = function(self, text)
+		consoleError(text)
+	end,
+
+	register = function(self, cmd, callback)
+		registerCommand(cmd, callback)
+	end
+}
