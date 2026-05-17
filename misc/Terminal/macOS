@@ -464,7 +464,6 @@ G2L["2f"]["MaxTextSize"] = 18;
 G2L["30"] = Instance.new("UIAspectRatioConstraint", G2L["29"]);
 G2L["30"]["AspectRatio"] = 1.63541;
 
-
 -- StarterGui.Terminal.Console.ConsoleLogging
 G2L["31"] = Instance.new("ScrollingFrame", G2L["29"]);
 G2L["31"]["Active"] = true;
@@ -486,28 +485,25 @@ G2L["31"]["BottomImage"] = "rbxasset://textures/ui/Scroll/scroll-middle.png";
 G2L["31"]["MidImage"] = "rbxasset://textures/ui/Scroll/scroll-middle.png";
 G2L["31"]["TopImage"] = "rbxasset://textures/ui/Scroll/scroll-middle.png";
 
-G2L["32"] = Instance.new("UIListLayout", G2L["31"]);
-G2L["32"]["Padding"] = UDim.new(0, 2);
-G2L["32"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
-G2L["32"]["HorizontalAlignment"] = Enum.HorizontalAlignment.Left;
+-- StarterGui.Terminal.Console.ConsoleLogging.UIPadding
+G2L["32"] = Instance.new("UIPadding", G2L["31"]);
+G2L["32"]["PaddingTop"] = UDim.new(0, 5);
+G2L["32"]["PaddingRight"] = UDim.new(0, 5);
+G2L["32"]["PaddingLeft"] = UDim.new(0, 5);
+G2L["32"]["PaddingBottom"] = UDim.new(0, 5);
 
-G2L["33"] = Instance.new("UIPadding", G2L["31"]);
-G2L["33"]["PaddingTop"] = UDim.new(0, 6);
-G2L["33"]["PaddingBottom"] = UDim.new(0, 6);
-G2L["33"]["PaddingLeft"] = UDim.new(0, 8);
-G2L["33"]["PaddingRight"] = UDim.new(0, 8);
+-- StarterGui.Terminal.Console.ConsoleLogging.UIListLayout
+G2L["33"] = Instance.new("UIListLayout", G2L["31"]);
+G2L["33"]["Padding"] = UDim.new(0, 2);
+G2L["33"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
+G2L["33"]["HorizontalAlignment"] = Enum.HorizontalAlignment.Left;
 
-G2L["32"]:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+G2L["33"]:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
 	G2L["31"].CanvasSize = UDim2.new(
 		0,
 		0,
 		0,
-		G2L["32"].AbsoluteContentSize.Y + 12
-	)
-
-	G2L["31"].CanvasPosition = Vector2.new(
-		0,
-		math.huge
+		G2L["33"].AbsoluteContentSize.Y + 10
 	)
 end)
 
