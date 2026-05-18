@@ -15,7 +15,8 @@ What neriumR offer you?
     - This let you sniped web Item everywhere anywhere using neriumR auto search
 - Paid Sniper
      - This also let you sniped everywhere and even have higher chance to get `1#` as always unless no competition also using this script.
-	 - This also offer you a complex configuration for flexibility. Im not gonna explained all but its pretty self explanation
+	 - This also offer you a complex configuration for flexibility. Im not gonna explained all but its pretty self explanatory
+  - 
 
 
 ```luau
